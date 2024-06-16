@@ -19,8 +19,8 @@ Examples of auxiliary dataset with Log registers
 
 [x] Insert data into local host (mongodb)
 
-[] Create a docker container for the database
+[ ] Create a docker container for the database
 
-[] Create a docker container for the main script
+[ ] Create a docker container for the main script
 
-[] Create a docker compose flow to execute the project
+[ ] Create a docker compose flow to execute the project
