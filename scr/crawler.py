@@ -35,7 +35,7 @@ class Crawler():
         soup_news = soup.select('.js-stream-content')
 
         for index_new in range(0, len(soup_news), 1):
-            if index_new <= max_index:
+            if index_new <= max_index - 1:
                 soup_index = soup.select('.js-stream-content')[index_new]
                 list_items_raw.append(soup_index)
 
