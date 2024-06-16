@@ -16,13 +16,20 @@ class Crawler():
             return rq
         
         else:
-            raise Exception
-        
-    def get_news_soup(self, raw_html=get_news_html()):
+            raise Exception("url inválido") 
+    
+    def get_news_soup(self, raw_html = None):
+        if raw_html == None:
+            raw_html = self.get_news_html()
+
         soup = bs(raw_html.text, 'html.parser')
         return soup
 
-    def get_news_items_html(self, soup=get_news_soup(), max_index=22):
+    def get_news_items_html(self, soup=None, max_index=22):
+
+        if soup == None: 
+            soup = self.get_news_soup()
+
         list_items_raw = []
 
         soup_news = soup.select('.js-stream-content')
@@ -34,11 +41,27 @@ class Crawler():
 
         return list_items_raw
     
-    def get_news_data(html_raw_list: list = get_news_items_html()):
+    def valid_info(self, field):
+        try:
+            return field
+        except:
+            return 'None'
+    
+    def get_news_data(self, html_raw_list: None):
+
+        if html_raw_list == None:
+            html_raw_list = self.get_news_items_html()
 
         search_data = [] 
 
+        print(f'Coletando dados de {len(html_raw_list)} headlines')
+
+        c = 1
+
         for item in html_raw_list:
+
+            # coletando dados
+            print(f'Coletando postagem de número {c}')
 
             # pegando a url
             url = item.h3.a['href']
@@ -53,32 +76,37 @@ class Crawler():
             news_content = bs(news_page.text, 'html.parser')
 
             # pegando o autor da notícia
-            author = news_content.select('.caas-attr-item-author')[0].text
+            author =  self.valid_info(news_content.select('.caas-attr-item-author')[0].text)
 
             # Datetime e a quantidade de minutos da notícia
-            updated_time = news_content.select('.caas-attr-time-style')
+            updated_time =  self.valid_info(news_content.select('.caas-attr-time-style'))
 
-            datetime_news = updated_time[0].time['datetime']
-            mins_read = updated_time[0].select('.caas-attr-mins-read')[0].text.split()[0]
+            datetime_news = self.valid_info(updated_time[0].time['datetime'])
+            mins_read = self.valid_info(updated_time[0].select('.caas-attr-mins-read')[0].text.split()[0])
 
             # pegando outras características da notícia
-            data_site = news_content.select('.reactions-count')[0]['data-site']
-            data_source = news_content.select('.reactions-count')[0]['data-source']
-            data_type = news_content.select('.reactions-count')[0]['data-type']
-            count_comments = news_content.select('.reactions-count')[0].text
+            data_site = self.valid_info(news_content.select('.reactions-count')[0]['data-site'])
+            data_source = self.valid_info(news_content.select('.reactions-count')[0]['data-source'])
+            data_type = self.valid_info(news_content.select('.reactions-count')[0]['data-type'])
+            count_comments = self.valid_info(news_content.select('.reactions-count')[0].text)
             
             news_data = {
-                'url': url if len(url) > 0 else 'None',
-                'author': author if len(author) > 0  else 'None',
-                'headline': headline if len(headline) > 0 else 'None',
-                'datetime_news': datetime_news if len(datetime_news) > 0 else 'None',
-                'mins_read': mins_read if len(mins_read) > 0 else 'None',
-                'data_site': data_site if len(data_site) > 0 else 'None',
-                'data_source': data_source if len(data_source) > 0 else 'None',
-                'data_type': data_type if len(data_type) > 0 else 'None',
-                'count_comments': count_comments if len(count_comments) > 0 else 'None'
+                'url': url,
+                'author': author,
+                'headline': headline,
+                'datetime_news': datetime_news,
+                'mins_read': mins_read,
+                'data_site': data_site,
+                'data_source': data_source,
+                'data_type': data_type,
+                'count_comments': count_comments,
             }
-        
+
+            print(news_data)
+
             search_data.append(news_data)
 
+            c += 1
+
         return search_data
+    

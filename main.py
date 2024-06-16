@@ -1,32 +1,18 @@
-# Imports
-# import re
-# import time
-# import json
-# import requests
-# import bs4
-# import connectmongo
-# from bs4 import BeautifulSoup as bs
 from scr.crawler import Crawler
-# from urllib.parse import unquote
-# import datetime
-
-
-# search = "https://www.linkedin.com/jobs/search/?currentJobId=3743834990&keywords=data%20analyst&origin=SWITCH_SEARCH_VERTICAL"
 
 # Get the news html
 crawler = Crawler()
 
 news_html = crawler.get_news_html()
 
-# # Get the soup from the news
+# Get the soup from the news
 news_soup = crawler.get_news_soup(raw_html = news_html)
 
-
+# Get the items news from the search
 news_items = crawler.get_news_items_html(soup=news_soup, max_index=15)
-        
-    
+
+# Get a list of data from each item
 items_data = crawler.get_news_data(html_raw_list = news_items)
-# print(news_html)
                       
 print(items_data)
 
